@@ -23,7 +23,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("unable to get MOUNT port: %v", err)
 	}
-	log.Println("MOUNT", port)
 	defer pm.Close()
 	mount, err := nfs.DialMount("tcp", fmt.Sprintf("stora.local:%d", port))
 	if err != nil {

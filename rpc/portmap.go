@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/davecheney/nfs/xdr"
+	"golang.org/x/crypto/ssh"
 )
 
 // PORTMAP
@@ -91,6 +92,13 @@ func (p *Portmapper) Dump() ([]Mapping, error) {
 
 func DialPortmapper(net, host string) (*Portmapper, error) {
 	client, err := DialTCP(net, fmt.Sprintf("%s:%d", host, PMAP_PORT))
+	if err != nil {
+		return nil, err
+	}
+	return &Portmapper{client}, nil
+}
+func DDialPortmapper(net, host string, c *ssh.Client) (*Portmapper, error) {
+	client, err := DDialTCP(net, fmt.Sprintf("%s:%d", host, PMAP_PORT),c)
 	if err != nil {
 		return nil, err
 	}

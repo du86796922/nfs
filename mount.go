@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/davecheney/nfs/xdr"
 	"github.com/davecheney/nfs/rpc"
+	"golang.org/x/crypto/ssh"
 )
 
 const (
@@ -114,6 +115,13 @@ func (m *Mount) Exports() ([]Export, error) {
 
 func DialMount(net, addr string) (*Mount, error) {
 	client, err := rpc.DialTCP(net, addr)
+	if err != nil {
+		return nil, err
+	}
+	return &Mount{client}, nil
+}
+func DDialMount(net, addr string,c *ssh.Client) (*Mount, error) {
+	client, err := rpc.DDialTCP(net, addr,c)
 	if err != nil {
 		return nil, err
 	}

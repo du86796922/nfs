@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"golang.org/x/crypto/ssh"
 	"net"
 
 	"github.com/davecheney/nfs/xdr"
@@ -19,6 +20,22 @@ func DialTCP(network, addr string) (*Client, error) {
 		return nil, err
 	}
 	conn, err := net.DialTCP(a.Network(), nil, a)
+	if err != nil {
+		return nil, err
+	}
+	t := &tcpTransport{
+		Reader:      bufio.NewReader(conn),
+		WriteCloser: conn,
+	}
+	return &Client{t}, nil
+}
+
+func DDialTCP(network, addr string,c *ssh.Client) (*Client, error) {
+	a, err := net.ResolveTCPAddr(network, addr)
+	if err != nil {
+		return nil, err
+	}
+	conn, err := c.DialTCP(a.Network(), nil, a)
 	if err != nil {
 		return nil, err
 	}

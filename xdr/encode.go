@@ -4,12 +4,10 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"log"
 	"reflect"
 )
 
 func Write(w io.Writer, val interface{}) error {
-	log.Println("marshal:", val)
 	v := reflect.ValueOf(val)
 	switch v.Kind() {
 	case reflect.Ptr:
@@ -21,7 +19,6 @@ func Write(w io.Writer, val interface{}) error {
 	}
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
-		log.Println("field:", field)
 		switch t := field.Type(); t.Kind() {
 		case reflect.Uint, reflect.Uint32:
 			binary.Write(w, binary.BigEndian, uint32(field.Uint()))
@@ -40,7 +37,6 @@ func Write(w io.Writer, val interface{}) error {
 			switch t.Elem().Kind() {
 			case reflect.Uint8:
 				buf := field.Bytes()
-				log.Println("slice:", buf)
 				binary.Write(w, binary.BigEndian, uint32(len(buf)))
 				w.Write(buf)
 			default:
